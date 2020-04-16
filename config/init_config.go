@@ -26,7 +26,7 @@ type InitConfig struct {
 	PrefixRedis         string        `json:"prefix_redis"`     // 输出redis前缀
 	Accumulated         int64         `json:"accumulated"`      // 暂停消费时候累加值
 	MinAccumulated      int64         `json:"min_accumulated"`  // 超过XX后开始累加值，经过测试 cache_size=1000 持续堆积的数值>700
-	ConsunerNum         int64         `json:"consumer_num"`     // 每个topic消费者数量， 该值应该小于分区数
+	ConsunerNum         int           `json:"consumer_num"`     // 每个topic消费者数量， 该值应该小于分区数
 	StartLockTimeOut    int64         // 运行锁失效时间
 	StartLockCheckTime  int64         // 运行锁维护间隔时间
 	ChPool              chan []string // 缓存池子 kafka与redis 数据传输介质，长度可以长点

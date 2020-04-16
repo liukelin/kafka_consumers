@@ -22,6 +22,7 @@ var (
 	RedisClass     consumers.RedisClass
 	Accumulated    int64 = 1000 // 暂停消费时候每秒累加值
 	MinAccumulated int64 = 700  // redis堆积>700开始累加值
+	ConsunerNum    int   = 1    // topic 消费者数量
 	// ChOpen             *bool    // 全局总开关，指针类型
 )
 
@@ -76,9 +77,11 @@ func init() {
 	if config.Config.Accumulated == 0 {
 		config.Config.Accumulated = Accumulated
 	}
-
 	if config.Config.MinAccumulated == 0 {
 		config.Config.MinAccumulated = MinAccumulated
+	}
+	if config.Config.ConsunerNum == 0 {
+		config.Config.ConsunerNum = ConsunerNum
 	}
 
 	glog.Warningf("%#v", config.Config)
@@ -118,13 +121,15 @@ func main() {
 		// 初始化消费开关
 		consumers.UpChOpen(topic, true)
 
-		// 初始化配置
-		consumerConf := &consumers.ConsumersConf{
-			Topics: []string{topic},
+		for i := 0; i < config.Config.ConsunerNum; i++ {
+			// 初始化配置
+			consumerConf := &consumers.ConsumersConf{
+				Topics: []string{topic},
+			}
+			go func() {
+				consumers.ConfluentConsumer(consumerConf)
+			}()
 		}
-		go func() {
-			consumers.ConfluentConsumer(consumerConf)
-		}()
 	}
 
 	// 启动控制器

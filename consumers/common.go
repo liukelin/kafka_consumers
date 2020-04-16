@@ -82,10 +82,12 @@ func InitRedis() RedisClass {
 	return redisClass
 }
 
-// 消费控制器
-// 每隔1s检查redis list是否已满
-// 并且更新 topic积压信息
-// 消费
+/*
+消费控制器
+每隔1s检查redis list是否已满
+并且更新 topic积压信息
+消费
+*/
 func Controller(qcache RedisClass) {
 
 	go func() {
@@ -99,13 +101,10 @@ func Controller(qcache RedisClass) {
 					glog.Errorf("error redis len:%v", err)
 					chOpen = false // 获取长度失败，先暂停消费
 				} else {
-					//int64(len(config.Config.ChPool))+
+					//int64(len(config.Config.ChPool))
 					if data > config.Config.CacheSize {
 						chOpen = false
 					}
-
-					// 更新长度
-					// UpdateTopicLen(topic, data)
 				}
 				UpChOpen(topic, chOpen)
 			}
@@ -191,8 +190,10 @@ func GetChOpen(topic string) bool {
 	return false
 }
 
-// 开启和关闭开关
-// 0关 1开
+/*
+开启和关闭开关
+0关 1开
+*/
 func UpChOpen(topic string, open bool) {
 	nowChOpen := GetChOpen(topic)
 	if open { // 可写
@@ -251,37 +252,6 @@ func TopicLenToCache(qcache RedisClass) {
 			return true
 		}
 		config.Config.TopicLenMap.Range(f)
-
-		/*
-			data, err := qcache.Cmd("hgetall", "kafka_offset_infos")
-			if err != nil {
-				glog.Errorf("hgetall kafka_offset_infos: %v", err)
-			}
-
-			switch list := data.(type) {
-			case []interface{}:
-				for i := 0; i < len(list); i++ {
-					if i%2 == 0 {
-						arr := strings.Split(list[i].(string), "##")
-
-						if len(arr) > 2 {
-							offset, _ := strconv.ParseInt(list[i+1].(string), 10, 64)
-							if _, ok := d[arr[2]]; !ok {
-								d[arr[2]] = 0
-							}
-
-							if arr[0] == "<all>" {
-								d[arr[2]] = d[arr[2]] + offset
-							} else {
-								d[arr[2]] = d[arr[2]] - offset
-							}
-						}
-					}
-				}
-			default:
-				glog.Errorf("hgetall kafka_offset_infos type: %v", list)
-			}
-		*/
 		for topic, offset := range d {
 			if offset < 0 {
 				offset = 0
@@ -292,13 +262,14 @@ func TopicLenToCache(qcache RedisClass) {
 	}
 }
 
-// 记录各个分区的offset
-// <formal>##<0>##{topic} {"0"=>1, "2"=>1} 正式消费信息
-// <all>##<0>##{topic}    {"0"=>1, "2"=>1} 全部消费信息
+/*
+记录各个分区的offset
+<formal>##<0>##{topic} {"0"=>1, "2"=>1} 正式消费信息
+<all>##<0>##{topic}    {"0"=>1, "2"=>1} 全部消费信息
+*/
 func SetTopicLen(types string, topic string, partition string, offset int64) {
 	key := fmt.Sprintf("<%s>##<%s>##%s", types, partition, topic)
 	config.Config.TopicLenMap.Store(key, offset)
-	// qcache.Cmd("hmset", "kafka_offset_infos", key, offset)
 }
 
 /**
