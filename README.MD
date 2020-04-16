@@ -45,6 +45,11 @@
         "consumer_group":"test-group",
         "start_lock":"kafka_consumers_run",
         "prefix_redis":"queues:",
-        "consumer_num":2                                // 每个topic的消费者数量，该值应<=partition
+        "consumer_num":2,                               // 每个topic的消费者数量，该值应<=partition
+        "topics_queue_len":"topics_queue_len"          // 记录topic堆积情况key, 这个是预估值
     }
+
+    // redis_host 和 redis_port 数量都=1的话，就是单点； 
+    // redis_host 和 redis_port 数量相同 并且>1 就是cluster；
+    // redis_host 数量>1, redis_port 数量=1 就是 sentinel;
 ```
