@@ -22,6 +22,8 @@
         3. 引入redis list结构作为消息缓冲，为业务进程提供数据,。因为redis特性，获取redis list的数据天然不存在竞争问题，这样业务进程的数量就可以随需求来动态增减，灵活的控制消费速度。
         4. redis（内存）消息堆积存在挤爆内存的风险，为了避免导致堆积，这里对写入数据的redis list 的长度做了限制，避免各个topic数据无限制的写入到redis key，保证等待消费的消息尽可能的待在安全的kafka(磁盘)保证不丢失。
 
+![image](https://github.com/liukelin/kafka_consumers/raw/master/img/1587032745802.png)
+
 ```
     调试运行
     go run main.go --config=conf.json  -alsologtostderr
