@@ -1,0 +1,16 @@
+{
+    "kafka_addr":["127.0.0.1:9092","127.0.0.1:9093"],
+    "redis_host":[
+        "127.0.0.1"
+    ],
+    "redis_port":[
+        "6379"
+    ],
+    "sentinel_master_name":"redis_cache_master",
+    "cache_size":100,
+    "topics":["work_queue_ngx2php", "client_online_channel", "default"],
+    "consumer_group":"laravel_queue",
+    "start_lock":"kafka_consumers_run",
+    "prefix_redis":"queues:",
+    "consumer_num":2
+}
