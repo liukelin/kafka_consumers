@@ -12,8 +12,9 @@
         2. 保证一个topic/partition只有1个消费者，并且是常驻连接，尽可能的减少重复连接消费者的情况。
         3. redis对并发请求数量几乎没有限制，redis的list结构也基本满足作为一个临时队列的要求。
         4. 所以该工具将kafka消费后的数据push到redis list，而业务进程从redis list获取数据进行消费。
-        5. 并提供一个获取topic LAG信息的功能，将topic LAG信息记录到redis。
-        5. golang对并发有天然的支持，并且静态编译也保证了运行环境的简洁，所以该工具使用golang进行开发。
+        5. 为了避免redis list数据堆积，增加redis list堆积长度判断，如果达到该长度，则暂停从kafka消费数据。
+        6. 并提供一个获取topic LAG信息的功能，将topic LAG信息记录到redis。
+        7. golang对并发有天然的支持，并且静态编译也保证了运行环境的简洁，所以该工具使用golang进行开发。
 
 
     解决问题
