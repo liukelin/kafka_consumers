@@ -25,6 +25,7 @@
 
     剩余问题
         1. kafka分区消息堆积数(LGA)的值没找到很好的办法直接获取，当前的做法是启用一个新消费组的消费者订阅消费者，不commit offset的情况下，消费速度几乎是实时并且无堆积的。它的offset - 正式消费者的offset，几乎可以认为是正式消费者offset的堆积数。 这块逻辑需要优化，寻找可直接获取消费者堆积数的方法。
+        2. 使用 LAG = HighWatermark - ConsumerOffset 来计算当前分区堆积数。
 
 ![image](https://github.com/liukelin/kafka_consumers/raw/master/img/1587032745802.jpg)
 
