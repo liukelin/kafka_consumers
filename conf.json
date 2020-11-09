@@ -8,7 +8,7 @@
     ],
     "sentinel_master_name":"redis_cache_master",
     "cache_size":100,
-    "topics":["work_queue_ngx2php", "client_online_channel", "default"],
+    "topics":["work_queue_ngx2php"],
     "consumer_group":"laravel_queue",
     "start_lock":"kafka_consumers_run",
     "prefix_redis":"queues:",

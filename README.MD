@@ -39,19 +39,19 @@
     {
         "kafka_addr":["127.0.0.1:9092","127.0.0.1:9093"],
         "redis_host":[
-            "10.91.49.20","10.91.49.21","10.91.49.22"
+            "127.0.0.1","127.0.0.1","127.0.0.2"
         ],
         "redis_port":[
-            "27000"
+            "6379"
         ],
         "sentinel_master_name":"redis_cache_master",    // redis sentinel模式下必填
         "cache_size":5,                                 // redis list允许堆积的数量
-        "topics":["lkl_test","lkl_make"],
-        "consumer_group":"test-group",
-        "start_lock":"kafka_consumers_run",
+        "topics":["lkl_test","lkl_make"],               // 消费的topic
+        "consumer_group":"test-group",                  // 消费组
+        "start_lock":"kafka_consumers_run",             // 进程锁
         "prefix_redis":"queues:",
         "consumer_num":2,                               // 每个topic的消费者数量，该值应<=partition
-        "topics_queue_len":"topics_queue_len"          // 记录topic堆积情况key, 这个是预估值
+        "topics_queue_len":"topics_queue_len"           // 记录topic堆积情况key, 这个是预估值
     }
 
     // redis_host 和 redis_port 数量都=1的话，就是单点； 

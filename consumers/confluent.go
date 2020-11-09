@@ -97,6 +97,7 @@ func ConfluentConsumer(consumerConf *ConsumersConf) {
 			d := []string{*e.TopicPartition.Topic, string(e.Value)}
 			config.Config.ChPool <- d
 			glog.Infof("[Message][Topic[Partition]@Offsets]: %v; msg: %v;", e.TopicPartition.String(), d[1])
+			glog.Infof("[Metadata]:%v, %v", e.TopicPartition.Metadata, e.String())
 
 			offits, _ := strconv.ParseInt(e.TopicPartition.Offset.String(), 10, 64)
 			partition := strconv.FormatInt(int64(e.TopicPartition.Partition), 10)
@@ -139,6 +140,20 @@ func ConfluentConsumer(consumerConf *ConsumersConf) {
 
 	glog.Warningf("Closing consumer.")
 	c.Close()
+}
+
+// 获取分区消息堆积数量
+func getLag(consumer *kafka.Consumer, topicPartition kafka.TopicPartition) (int64, error) {
+	kafkaTimeout := 10000
+	// lowOffset: The offset of the earliest message in the topic/partition. If no messages have been written to the topic, the low
+	//  watermark offset is set to 0. The low watermark will also be 0 if one message has been written to the partition (with offset 0).
+	// highOffset: The high watermark offset, which is the offset of the latest message in the topic/partition available for consumption + 1.
+	_, highOffset, err := consumer.QueryWatermarkOffsets(*topicPartition.Topic, topicPartition.Partition, kafkaTimeout)
+	if err != nil {
+		return -1, err
+	}
+	offset := int64(topicPartition.Offset)
+	return highOffset - offset, nil
 }
 
 // 订阅全部topic
@@ -234,4 +249,9 @@ func showPartitionOffset(c *kafka.Consumer, topic string, partition int) {
 	} else {
 		fmt.Println("\n Looks like we fetch empty metadata. Ensure that librdkafka version > v1.1.0")
 	}
+}
+
+// 获取partition lag
+func getPartitionLag(c *kafka.Consumer, topic string, partition int) {
+
 }

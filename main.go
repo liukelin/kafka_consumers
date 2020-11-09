@@ -138,6 +138,11 @@ func main() {
 	for {
 		select {
 		case sig := <-config.Sigchan:
+
+			// 优雅退出，保证正在处理的数据不会被丢失。 先关闭消费者
+
+			// end
+
 			glog.Errorf("signal信号:%v.", sig)
 			os.Exit(1)
 		default:
